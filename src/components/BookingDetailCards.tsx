@@ -19,6 +19,7 @@ interface Booking {
   paymentMethod?: string; paymentStatus?: string;
   fareType?: string; meterDistance?: number | null; meterFare?: number | null;
   cashCollected?: number | null; notes?: string | null;
+  eventSurcharge?: number | null;
 }
 
 export function PaymentCard({ booking }: { booking: Booking }) {

@@ -13,9 +13,10 @@ interface WaitingTimeCardProps {
   journeyStarted: boolean; // true = in-progress, false = arrived
   initialSeconds: number; // accumulated from DB
   onChargeChange: (charge: number, seconds: number) => void;
+  compact?: boolean;
 }
 
-export default function WaitingTimeCard({ bookingId, journeyStarted, initialSeconds, onChargeChange }: WaitingTimeCardProps) {
+export default function WaitingTimeCard({ bookingId, journeyStarted, initialSeconds, onChargeChange, compact }: WaitingTimeCardProps) {
   const [totalSeconds, setTotalSeconds] = useState(initialSeconds);
   const [sessionSeconds, setSessionSeconds] = useState(0);
   const [running, setRunning] = useState(false);
@@ -119,6 +120,42 @@ export default function WaitingTimeCard({ bookingId, journeyStarted, initialSeco
   const statusColor = running
     ? (isFreePhase ? "#22C55E" : "#F97316")
     : (totalSeconds > 0 ? COLORS.gray400 : COLORS.gold);
+
+  if (compact) {
+    return (
+      <View style={{ backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 12, padding: 10, borderWidth: 1, borderColor: running ? "#22C55E40" : "rgba(255,255,255,0.06)" }}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+            <Ionicons name="hourglass-outline" size={13} color={COLORS.gold} />
+            <Text style={{ color: COLORS.white, fontSize: 11, fontWeight: "700" }}>Waiting</Text>
+          </View>
+          <View style={{ backgroundColor: running ? "rgba(34,197,94,0.15)" : "rgba(255,255,255,0.08)", paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6 }}>
+            <Text style={{ fontSize: 8, fontWeight: "800", color: running ? "#22C55E" : COLORS.gray400 }}>
+              {running ? (isFreePhase ? "FREE" : "CHARGING") : (totalSeconds > 0 ? "PAUSED" : "READY")}
+            </Text>
+          </View>
+        </View>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 4 }}>
+          <View>
+            <Text style={{ color: COLORS.white, fontSize: 20, fontWeight: "800", fontVariant: ["tabular-nums"] }}>{formatTime(totalSeconds)}</Text>
+            <Text style={{ color: COLORS.gray500, fontSize: 8, fontWeight: "600" }}>time</Text>
+          </View>
+          <View style={{ alignItems: "flex-end" }}>
+            <Text style={{ color: charge > 0 ? "#F97316" : COLORS.white, fontSize: 20, fontWeight: "800" }}>£{charge.toFixed(2)}</Text>
+            <Text style={{ color: COLORS.gray500, fontSize: 8, fontWeight: "600" }}>charge</Text>
+          </View>
+        </View>
+        {isFreePhase && <Text style={{ color: "#22C55E", fontSize: 9, fontWeight: "600", marginBottom: 6 }}>Within free allowance</Text>}
+        <TouchableOpacity activeOpacity={0.8} onPress={running ? stopWaiting : startWaiting}
+          style={{ backgroundColor: running ? "#EF4444" : "#22C55E", paddingVertical: 8, borderRadius: 8, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5 }}>
+          <Ionicons name={running ? "stop-circle" : "hourglass-outline"} size={14} color={COLORS.white} />
+          <Text style={{ color: COLORS.white, fontWeight: "700", fontSize: 12 }}>
+            {running ? "Stop" : "Start"} wait
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.card, { borderColor: statusColor, borderWidth: 1 }]}>

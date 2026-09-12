@@ -29,6 +29,7 @@ interface Booking {
   waitingSeconds?: number | null; waitingCharge?: number | null;
   isRecurring?: boolean;
   notes?: string | null;
+  eventSurcharge?: number | null;
 }
 
 const actions: Record<string, { label: string; next: string; icon: string; color: string }[]> = {
@@ -179,21 +180,72 @@ export default function BookingDetailScreen() {
         </View>
 
         <PaymentCard booking={booking} />
+        {booking.eventSurcharge != null && booking.eventSurcharge !== 0 && (
+          <View style={{
+            flexDirection: "row", alignItems: "center", gap: 8,
+            backgroundColor: booking.eventSurcharge > 0 ? "rgba(249,115,22,0.08)" : "rgba(34,197,94,0.08)",
+            borderRadius: 10, paddingVertical: 8, paddingHorizontal: 12, marginBottom: 10,
+          }}>
+            <View style={{
+              width: 26, height: 26, borderRadius: 8,
+              backgroundColor: booking.eventSurcharge > 0 ? "rgba(249,115,22,0.15)" : "rgba(34,197,94,0.15)",
+              justifyContent: "center", alignItems: "center",
+            }}>
+              <Ionicons
+                name={booking.eventSurcharge > 0 ? "trending-up" : "pricetag"}
+                size={14}
+                color={booking.eventSurcharge > 0 ? "#F97316" : "#22C55E"}
+              />
+            </View>
+            <Text style={{ color: COLORS.white, fontSize: 11, fontWeight: "600", flex: 1 }}>
+              {booking.eventSurcharge > 0 ? "Event Surcharge" : "Discount"} applied
+            </Text>
+            <View style={{
+              backgroundColor: booking.eventSurcharge > 0 ? "rgba(249,115,22,0.15)" : "rgba(34,197,94,0.15)",
+              paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8,
+            }}>
+              <Text style={{
+                color: booking.eventSurcharge > 0 ? "#F97316" : "#22C55E",
+                fontSize: 11, fontWeight: "800",
+              }}>
+                {booking.eventSurcharge > 0 ? `+${booking.eventSurcharge}%` : `${booking.eventSurcharge}%`}
+              </Text>
+            </View>
+          </View>
+        )}
         <CustomerCard booking={booking} onCall={() => booking.phone && Linking.openURL(`tel:${booking.phone}`)} />
         <TripCard booking={booking} currentStopIndex={currentStopIndex}
           onNextStop={() => setCurrentStopIndex((i) => i + 1)} />
         <RideInfoCard booking={booking} />
-        {booking.fareType === "meter" && (booking.status === "arrived" || booking.status === "in-progress") && (
-          <WaitingTimeCard
-            bookingId={booking.id}
-            journeyStarted={booking.status === "in-progress"}
-            initialSeconds={waitingSeconds}
-            onChargeChange={(c, s) => { setWaitingCharge(c); setWaitingSeconds(s); }}
-          />
-        )}
-        {booking.fareType === "meter" && isInProgress && !isInvoice && (
-          <MeterCard meterRunning={meterRunning} meterDistance={meterDistance}
-            meterFare={meterFare} waitingCharge={waitingCharge} onStart={startMeter} onStop={stopMeter} />
+        {booking.fareType === "meter" && (booking.status === "arrived" || isInProgress) && (
+          <View style={isInProgress ? { marginBottom: 10, backgroundColor: "rgba(255,255,255,0.06)", borderRadius: 14, padding: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)" } : undefined}>
+            {isInProgress && (
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                <Text style={{ color: COLORS.white, fontSize: 14, fontWeight: "700" }}>Trip in progress</Text>
+                <Text style={{ color: COLORS.gold, fontSize: 11, fontWeight: "600" }}>
+                  {booking.distance.toFixed(1)} mi · £{booking.fare.toFixed(2)}–£{(booking.fare * 1.1).toFixed(2)}
+                </Text>
+              </View>
+            )}
+            <View style={isInProgress ? { flexDirection: "row", gap: 8 } : undefined}>
+              <View style={isInProgress ? { flex: 1 } : undefined}>
+                <WaitingTimeCard
+                  bookingId={booking.id}
+                  journeyStarted={isInProgress}
+                  initialSeconds={waitingSeconds}
+                  onChargeChange={(c, s) => { setWaitingCharge(c); setWaitingSeconds(s); }}
+                  compact={isInProgress}
+                />
+              </View>
+              {isInProgress && !isInvoice && (
+                <View style={{ flex: 1 }}>
+                  <MeterCard meterRunning={meterRunning} meterDistance={meterDistance}
+                    meterFare={meterFare} waitingCharge={waitingCharge} onStart={startMeter} onStop={stopMeter}
+                    compact />
+                </View>
+              )}
+            </View>
+          </View>
         )}
         <NotesCard booking={booking} />
 

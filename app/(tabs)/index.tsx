@@ -14,7 +14,6 @@ import { useKeepAwake } from "expo-keep-awake";
 import { useUnreadCount } from "@/src/hooks/useNotifications";
 import { useChatUnread } from "@/src/hooks/useChatUnread";
 import styles from "@/src/styles/dashboard";
-import ReportsButton from "@/src/components/ReportsButton";
 
 interface Driver {
   name: string; status: string; isAvailable?: boolean;
@@ -31,6 +30,7 @@ export default function DashboardScreen() {
   const [earnings, setEarnings] = useState(0);
   const [systemOpen, setSystemOpen] = useState(true);
   const [reopeningTime, setReopeningTime] = useState("08:00");
+  const [activeEvent, setActiveEvent] = useState<{ name: string; increasePercent: number } | null>(null);
 
   useLocationTracking(available);
   useKeepAwake();
@@ -66,6 +66,11 @@ export default function DashboardScreen() {
     requestPermissions();
     fetch("https://shine-cars-dispatch.vercel.app/api/settings/system-status")
       .then((r) => r.json()).then((d) => { setSystemOpen(d.open); setReopeningTime(d.reopeningTime || "08:00"); }).catch(() => {});
+    const now = new Date();
+    const date = now.toISOString().split("T")[0];
+    const time = now.toTimeString().slice(0, 5);
+    fetch(`https://shine-cars-dispatch.vercel.app/api/events/check?date=${date}&time=${time}`)
+      .then((r) => r.json()).then((d) => { if (d.event) setActiveEvent(d.event); else setActiveEvent(null); }).catch(() => {});
   }, []);
 
   const requestPermissions = async () => {
@@ -180,13 +185,59 @@ export default function DashboardScreen() {
         )}
       </TouchableOpacity>
 
+      {/* Event Pricing Banner */}
+      {activeEvent && (() => {
+        const isSurcharge = activeEvent.increasePercent > 0;
+        const accent = isSurcharge ? "#F97316" : "#22C55E";
+        return (
+          <View style={{
+            borderRadius: 16, marginBottom: 16, overflow: "hidden",
+            borderWidth: 1.5, borderColor: `${accent}30`,
+          }}>
+            <View style={{ height: 3, backgroundColor: accent, opacity: 0.8 }} />
+            <View style={{
+              flexDirection: "row", alignItems: "center", gap: 12,
+              paddingVertical: 14, paddingHorizontal: 16,
+              backgroundColor: `${accent}10`,
+            }}>
+              <View style={{
+                width: 38, height: 38, borderRadius: 12,
+                backgroundColor: `${accent}18`,
+                justifyContent: "center", alignItems: "center",
+              }}>
+                <Ionicons name={isSurcharge ? "flame" : "sparkles"} size={20} color={accent} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 3 }}>
+                  <Text style={{ color: COLORS.white, fontSize: 13, fontWeight: "800" }}>
+                    {activeEvent.name}
+                  </Text>
+                  <View style={{ width: 4, height: 4, borderRadius: 2, backgroundColor: accent }} />
+                  <Text style={{ color: accent, fontSize: 10, fontWeight: "700", letterSpacing: 0.5 }}>LIVE</Text>
+                </View>
+                <Text style={{ color: COLORS.gray400, fontSize: 10, fontWeight: "500" }}>
+                  {isSurcharge ? "Surcharge active on all fares" : "Discount active on all fares"}
+                </Text>
+              </View>
+              <View style={{
+                backgroundColor: `${accent}20`, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10,
+              }}>
+                <Text style={{ color: accent, fontSize: 16, fontWeight: "900", letterSpacing: -0.5 }}>
+                  {isSurcharge ? `+${activeEvent.increasePercent}%` : `${activeEvent.increasePercent}%`}
+                </Text>
+              </View>
+            </View>
+          </View>
+        );
+      })()}
+
       {/* Stats */}
       <Text style={styles.sectionTitle}>Overview</Text>
       <View style={styles.statsGrid}>
         {stats.map((s) => (
           <View key={s.label} style={styles.statCard}>
             <View style={[styles.statIconWrap, { backgroundColor: s.bg }]}>
-              <Ionicons name={s.icon} size={20} color={s.color} />
+              <Ionicons name={s.icon} size={16} color={s.color} />
             </View>
             <Text style={styles.statValue}>{s.value}</Text>
             <Text style={styles.statLabel}>{s.label}</Text>
@@ -194,8 +245,45 @@ export default function DashboardScreen() {
         ))}
       </View>
 
-      {/* Reports */}
-      <ReportsButton onPress={() => router.push("/reports")} />
+      {/* Reports & Invoices */}
+      <View style={{ flexDirection: "row", gap: 8, marginTop: 16 }}>
+        <TouchableOpacity onPress={() => router.push("/reports")} activeOpacity={0.8}
+          style={{
+            flex: 1, flexDirection: "row", alignItems: "center", gap: 8,
+            backgroundColor: "rgba(204,34,41,0.08)", borderRadius: 12, padding: 12,
+            borderWidth: 1, borderColor: "rgba(204,34,41,0.15)",
+          }}>
+          <View style={{
+            width: 30, height: 30, borderRadius: 9, backgroundColor: "rgba(204,34,41,0.15)",
+            justifyContent: "center", alignItems: "center",
+          }}>
+            <Ionicons name="stats-chart" size={14} color={COLORS.crimson} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: COLORS.white, fontSize: 12, fontWeight: "700" }}>Earnings</Text>
+            <Text style={{ color: COLORS.gray500, fontSize: 9 }}>View reports</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={14} color={COLORS.gray500} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push("/invoices")} activeOpacity={0.8}
+          style={{
+            flex: 1, flexDirection: "row", alignItems: "center", gap: 8,
+            backgroundColor: "rgba(245,166,35,0.08)", borderRadius: 12, padding: 12,
+            borderWidth: 1, borderColor: "rgba(245,166,35,0.15)",
+          }}>
+          <View style={{
+            width: 30, height: 30, borderRadius: 9, backgroundColor: "rgba(245,166,35,0.15)",
+            justifyContent: "center", alignItems: "center",
+          }}>
+            <Ionicons name="receipt-outline" size={14} color={COLORS.gold} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: COLORS.white, fontSize: 12, fontWeight: "700" }}>Invoices</Text>
+            <Text style={{ color: COLORS.gray500, fontSize: 9 }}>Weekly billing</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={14} color={COLORS.gray500} />
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }

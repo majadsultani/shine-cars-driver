@@ -42,15 +42,15 @@ export default StyleSheet.create({
 
   // Stats
   sectionTitle: { color: COLORS.gray500, fontSize: 11, fontWeight: "700", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 14 },
-  statsGrid: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
+  statsGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   statCard: {
-    width: "47%", borderRadius: 20, padding: 20,
+    width: "47%", borderRadius: 14, padding: 12,
     borderWidth: 1, borderColor: "rgba(255,255,255,0.06)",
     backgroundColor: "rgba(255,255,255,0.04)",
   },
   statIconWrap: {
-    width: 40, height: 40, borderRadius: 12, justifyContent: "center", alignItems: "center",
+    width: 30, height: 30, borderRadius: 9, justifyContent: "center", alignItems: "center",
   },
-  statValue: { color: COLORS.white, fontSize: 24, fontWeight: "900", marginTop: 14, letterSpacing: -0.5 },
-  statLabel: { color: COLORS.gray500, fontSize: 11, marginTop: 4, fontWeight: "600", letterSpacing: 0.3 },
+  statValue: { color: COLORS.white, fontSize: 18, fontWeight: "900", marginTop: 8, letterSpacing: -0.5 },
+  statLabel: { color: COLORS.gray500, fontSize: 10, marginTop: 2, fontWeight: "600", letterSpacing: 0.3 },
 });

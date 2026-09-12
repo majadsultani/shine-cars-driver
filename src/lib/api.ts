@@ -148,6 +148,14 @@ export async function changePassword(oldPassword: string, newPassword: string) {
   });
 }
 
+export async function getDriverInvoices() {
+  return request("/api/drivers/invoices");
+}
+
+export async function getDriverInvoiceDetail(id: string) {
+  return request(`/api/drivers/invoices/${id}`);
+}
+
 export async function getDocuments(): Promise<{ success: boolean; documents?: { id: string; type: string; fileUrl: string; expiryDate: string }[] }> {
   return request("/api/drivers/documents");
 }

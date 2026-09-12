@@ -10,7 +10,7 @@ import { getDriver, clearAuth, saveDriver } from "@/src/lib/auth";
 import { getProfile, updateProfile, deleteAccount } from "@/src/lib/api";
 import ConfirmModal from "@/src/components/ConfirmModal";
 
-interface Driver { name: string; email: string; phone: string; status: string; vehicleMake?: string; vehicleColor?: string; vehicleReg?: string; passengerLicense?: number }
+interface Driver { name: string; email: string; phone: string; status: string; vehicleMake?: string; vehicleColor?: string; vehicleReg?: string; passengerLicense?: number; commissionRate?: number }
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -67,6 +67,7 @@ export default function ProfileScreen() {
     { icon: "color-palette-outline", label: "Color", value: driver?.vehicleColor || "—", editable: true },
     { icon: "pricetag-outline", label: "Reg No.", value: driver?.vehicleReg || "—", editable: true },
     { icon: "people-outline", label: "Licence to Carry", value: driver?.passengerLicense ? String(driver.passengerLicense) : "—", editable: false },
+    { icon: "trending-up-outline", label: "Commission Rate", value: `${driver?.commissionRate ?? 20}%`, editable: false },
   ];
 
   return (
@@ -129,7 +130,8 @@ export default function ProfileScreen() {
         </>
       )}
 
-      {[{ icon: "document-text-outline" as const, label: "Manage Documents", route: "/documents" },
+      {[{ icon: "receipt-outline" as const, label: "My Invoices", route: "/invoices" },
+        { icon: "document-text-outline" as const, label: "Manage Documents", route: "/documents" },
         { icon: "lock-closed-outline" as const, label: "Change Password", route: "/change-password" },
         { icon: "shield-outline" as const, label: "Privacy Policy", route: "/privacy" },
       ].map((item) => (

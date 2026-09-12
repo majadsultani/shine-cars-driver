@@ -3,11 +3,42 @@ import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/src/constants/theme";
 import styles from "@/src/styles/bookingDetail";
 
-export default function MeterCard({ meterRunning, meterDistance, meterFare, waitingCharge = 0, onStart, onStop }: {
+export default function MeterCard({ meterRunning, meterDistance, meterFare, waitingCharge = 0, onStart, onStop, compact }: {
   meterRunning: boolean; meterDistance: number; meterFare: number;
-  waitingCharge?: number;
+  waitingCharge?: number; compact?: boolean;
   onStart: () => void; onStop: () => void;
 }) {
+  if (compact) {
+    return (
+      <View style={{ backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 12, padding: 10, borderWidth: 1, borderColor: meterRunning ? "#F9731640" : COLORS.gold + "30" }}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+            <Ionicons name="speedometer-outline" size={13} color={COLORS.gold} />
+            <Text style={{ color: COLORS.white, fontSize: 11, fontWeight: "700" }}>Live meter</Text>
+          </View>
+          {meterRunning && <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: "#22C55E" }} />}
+        </View>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 4 }}>
+          <View>
+            <Text style={{ color: COLORS.white, fontSize: 20, fontWeight: "800" }}>{meterDistance.toFixed(1)}</Text>
+            <Text style={{ color: COLORS.gray500, fontSize: 8, fontWeight: "600" }}>miles</Text>
+          </View>
+          <View style={{ alignItems: "flex-end" }}>
+            <Text style={{ color: COLORS.white, fontSize: 20, fontWeight: "800" }}>£{meterFare.toFixed(2)}</Text>
+            <Text style={{ color: COLORS.gray500, fontSize: 8, fontWeight: "600" }}>fare</Text>
+          </View>
+        </View>
+        <TouchableOpacity activeOpacity={0.8} onPress={meterRunning ? onStop : onStart}
+          style={{ backgroundColor: meterRunning ? "#EF4444" : "#22C55E", paddingVertical: 8, borderRadius: 8, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5 }}>
+          <Ionicons name={meterRunning ? "stop-circle" : "play-circle"} size={14} color={COLORS.white} />
+          <Text style={{ color: COLORS.white, fontWeight: "700", fontSize: 12 }}>
+            {meterRunning ? "Stop" : "Start"} meter
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.card, { borderColor: "#F97316", borderWidth: 1 }]}>
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
