@@ -22,4 +22,4 @@ export const FONTS = {
   bold: "System",
 };
 
-export const API_URL = "https://shine-cars-dispatch.vercel.app";
+export const API_URL = "https://dispatch.shinecars.co.uk";
