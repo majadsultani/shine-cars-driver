@@ -55,11 +55,11 @@ export async function registerForPushNotifications(): Promise<string | null> {
     }
 
     if (Platform.OS === "android") {
-      await notif.setNotificationChannelAsync("default", {
+      await notif.setNotificationChannelAsync("booking-alerts", {
         name: "Booking Alerts",
         importance: notif.AndroidImportance.MAX,
         vibrationPattern: [0, 500, 300, 500, 300, 500],
-        sound: "default",
+        sound: "booking_alert.wav",
         bypassDnd: true,
         enableVibrate: true,
       });
