@@ -6,7 +6,7 @@ import { useAudioPlayer, AudioModule } from "expo-audio";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/src/constants/theme";
 
-const alertSound = require("@/assets/booking-alert.wav");
+const alertSound = require("@/assets/booking_alert.wav");
 const TIMER_SECONDS = 15;
 
 interface Booking {
