@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import { AppState } from "react-native";
 import { getBookings, getRecurringTemplates } from "@/src/lib/api";
 import { getToken } from "@/src/lib/auth";
 import { scheduleBookingReminder } from "@/src/lib/notifications";
@@ -81,6 +82,14 @@ export function useBookingPolling() {
     poll();
     intervalRef.current = setInterval(poll, POLL_INTERVAL);
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [poll]);
+
+  // Immediately poll when app comes back to foreground
+  useEffect(() => {
+    const sub = AppState.addEventListener("change", (state) => {
+      if (state === "active") poll();
+    });
+    return () => sub.remove();
   }, [poll]);
 
   return { assignedCount, recurringCount, alertBooking, dismissAlert };
