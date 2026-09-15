@@ -1,4 +1,4 @@
-import { createContext, useContext, ReactNode, Component, ErrorInfo } from "react";
+import { createContext, useContext, ReactNode, Component, ErrorInfo, useEffect } from "react";
 import { View, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { useBookingPolling, NewBooking } from "@/src/hooks/useBookingPolling";
