@@ -11,28 +11,22 @@ export default function MeterCard({ meterRunning, meterDistance, meterFare, wait
   if (compact) {
     return (
       <View style={{ backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 12, padding: 10, borderWidth: 1, borderColor: meterRunning ? "#F9731640" : COLORS.gold + "30" }}>
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-            <Ionicons name="speedometer-outline" size={13} color={COLORS.gold} />
-            <Text style={{ color: COLORS.white, fontSize: 11, fontWeight: "700" }}>Live meter</Text>
+            <Ionicons name="speedometer-outline" size={12} color={COLORS.gold} />
+            <Text style={{ color: COLORS.white, fontSize: 10, fontWeight: "700" }}>Meter</Text>
           </View>
           {meterRunning && <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: "#22C55E" }} />}
         </View>
-        <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 4 }}>
-          <View>
-            <Text style={{ color: COLORS.white, fontSize: 20, fontWeight: "800" }}>{meterDistance.toFixed(1)}</Text>
-            <Text style={{ color: COLORS.gray500, fontSize: 8, fontWeight: "600" }}>miles</Text>
-          </View>
-          <View style={{ alignItems: "flex-end" }}>
-            <Text style={{ color: COLORS.white, fontSize: 20, fontWeight: "800" }}>£{meterFare.toFixed(2)}</Text>
-            <Text style={{ color: COLORS.gray500, fontSize: 8, fontWeight: "600" }}>fare</Text>
-          </View>
+        <View style={{ alignItems: "center", marginBottom: 6 }}>
+          <Text style={{ color: COLORS.white, fontSize: 18, fontWeight: "800" }}>£{meterFare.toFixed(2)}</Text>
+          <Text style={{ color: COLORS.gray500, fontSize: 9, fontWeight: "600" }}>{meterDistance.toFixed(1)} mi</Text>
         </View>
         <TouchableOpacity activeOpacity={0.8} onPress={meterRunning ? onStop : onStart}
-          style={{ backgroundColor: meterRunning ? "#EF4444" : "#22C55E", paddingVertical: 8, borderRadius: 8, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5 }}>
-          <Ionicons name={meterRunning ? "stop-circle" : "play-circle"} size={14} color={COLORS.white} />
-          <Text style={{ color: COLORS.white, fontWeight: "700", fontSize: 12 }}>
-            {meterRunning ? "Stop" : "Start"} meter
+          style={{ backgroundColor: meterRunning ? "#EF4444" : "#22C55E", paddingVertical: 7, borderRadius: 8, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 4 }}>
+          <Ionicons name={meterRunning ? "stop-circle" : "play-circle"} size={13} color={COLORS.white} />
+          <Text style={{ color: COLORS.white, fontWeight: "700", fontSize: 11 }}>
+            {meterRunning ? "Stop" : "Start"}
           </Text>
         </TouchableOpacity>
       </View>

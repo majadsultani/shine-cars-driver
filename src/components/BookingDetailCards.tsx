@@ -22,12 +22,35 @@ interface Booking {
   eventSurcharge?: number | null;
 }
 
-export function PaymentCard({ booking }: { booking: Booking }) {
+export function PaymentCard({ booking, compact }: { booking: Booking; compact?: boolean }) {
   const isCash = booking.paymentMethod === "cash";
   const isCard = booking.paymentMethod === "card";
   const isInvoice = booking.paymentMethod === "invoice";
   const isPaid = booking.paymentStatus === "paid";
   const isMeter = booking.fareType === "meter";
+
+  if (compact) {
+    const icon = isInvoice ? "document-text-outline" : isCard ? "card-outline" : "cash-outline";
+    const color = isInvoice ? "#A855F7" : isCard ? "#06B6D4" : COLORS.gold;
+    const label = isInvoice ? "Invoice" : isCard ? (isPaid ? "Card ✓" : "Card") : "Cash";
+    const bgColor = isInvoice ? "rgba(168,85,247,0.08)" : isCard && isPaid ? "rgba(34,197,94,0.08)" : isCash ? "rgba(245,166,35,0.08)" : "rgba(255,255,255,0.06)";
+    const borderColor = isInvoice ? "rgba(168,85,247,0.2)" : isCard && isPaid ? "rgba(34,197,94,0.2)" : isCash ? "rgba(245,166,35,0.2)" : "rgba(255,255,255,0.08)";
+    return (
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: bgColor, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8, marginBottom: 8, borderWidth: 1, borderColor }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <Ionicons name={icon as keyof typeof Ionicons.glyphMap} size={16} color={color} />
+          <Text style={{ color: COLORS.white, fontSize: 13, fontWeight: "700" }}>{label}</Text>
+          {isMeter && <View style={{ backgroundColor: "#FFF7ED", paddingHorizontal: 6, paddingVertical: 2, borderRadius: 8 }}><Text style={{ fontSize: 9, fontWeight: "700", color: "#EA580C" }}>METER</Text></View>}
+        </View>
+        {isCash && booking.status !== "completed" && (
+          <Text style={{ color: COLORS.gold, fontSize: 11, fontWeight: "600" }}>
+            {isMeter && !booking.meterFare ? `£${booking.fare.toFixed(2)}–£${(booking.fare * 1.1).toFixed(2)}` : `£${(booking.meterFare ?? booking.fare).toFixed(2)}`}
+          </Text>
+        )}
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.card, isCard && isPaid ? styles.paidCard : isInvoice ? styles.invoiceCard : isCash ? styles.cashCard : null]}>
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
@@ -67,7 +90,21 @@ export function PaymentCard({ booking }: { booking: Booking }) {
   );
 }
 
-export function CustomerCard({ booking, onCall }: { booking: Booking; onCall: () => void }) {
+export function CustomerCard({ booking, onCall, compact }: { booking: Booking; onCall: () => void; compact?: boolean }) {
+  if (compact) {
+    return (
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: "rgba(255,255,255,0.06)", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8, marginBottom: 8, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)" }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <Ionicons name="person" size={14} color={COLORS.gold} />
+          <Text style={{ color: COLORS.white, fontSize: 13, fontWeight: "600" }}>{booking.name}</Text>
+        </View>
+        <TouchableOpacity onPress={onCall} style={{ flexDirection: "row", alignItems: "center", gap: 5, backgroundColor: "rgba(34,197,94,0.12)", paddingHorizontal: 10, paddingVertical: 5, borderRadius: 8 }}>
+          <Ionicons name="call" size={13} color={COLORS.green} />
+          <Text style={{ color: COLORS.green, fontSize: 12, fontWeight: "700" }}>{booking.phone}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
   return (
     <View style={styles.card}>
       <Text style={styles.cardTitle}>Customer</Text>
@@ -128,14 +165,44 @@ export function TripCard({ booking, currentStopIndex, onNextStop }: {
   );
 }
 
-export function RideInfoCard({ booking }: { booking: Booking }) {
+export function RideInfoCard({ booking, compact }: { booking: Booking; compact?: boolean }) {
+  const fareValue = booking.fareType === "meter" && !booking.meterFare
+    ? `£${booking.fare.toFixed(2)} – £${(booking.fare * 1.1).toFixed(2)}`
+    : `£${(booking.meterFare ?? booking.fare).toFixed(2)}`;
+  const fareLabel = booking.fareType === "meter" && !booking.meterFare ? "Est. Fare" : "Fare";
+
+  if (compact) {
+    return (
+      <View style={{ flexDirection: "row", backgroundColor: "rgba(255,255,255,0.06)", borderRadius: 10, paddingVertical: 8, paddingHorizontal: 6, marginBottom: 8, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", justifyContent: "space-around" }}>
+        <View style={{ alignItems: "center", flex: 1 }}>
+          <Ionicons name="calendar-outline" size={13} color={COLORS.gold} />
+          <Text style={{ color: COLORS.white, fontSize: 11, fontWeight: "700", marginTop: 2 }}>{booking.date}</Text>
+          <Text style={{ color: COLORS.gray500, fontSize: 8, marginTop: 1 }}>Date</Text>
+        </View>
+        <View style={{ alignItems: "center", flex: 1 }}>
+          <Ionicons name="time-outline" size={13} color={COLORS.gold} />
+          <Text style={{ color: COLORS.white, fontSize: 11, fontWeight: "700", marginTop: 2 }}>{booking.time}</Text>
+          <Text style={{ color: COLORS.gray500, fontSize: 8, marginTop: 1 }}>Time</Text>
+        </View>
+        <View style={{ alignItems: "center", flex: 1 }}>
+          <Ionicons name="speedometer-outline" size={13} color={COLORS.gold} />
+          <Text style={{ color: COLORS.white, fontSize: 11, fontWeight: "700", marginTop: 2 }}>{booking.distance?.toFixed(1) || "—"} mi</Text>
+          <Text style={{ color: COLORS.gray500, fontSize: 8, marginTop: 1 }}>Distance</Text>
+        </View>
+        <View style={{ alignItems: "center", flex: 1.4 }}>
+          <Ionicons name="cash-outline" size={13} color={COLORS.gold} />
+          <Text style={{ color: COLORS.white, fontSize: 11, fontWeight: "700", marginTop: 2 }} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{fareValue}</Text>
+          <Text style={{ color: COLORS.gray500, fontSize: 8, marginTop: 1 }}>{fareLabel}</Text>
+        </View>
+      </View>
+    );
+  }
+
   const items: { icon: keyof typeof Ionicons.glyphMap; value: string; label: string }[] = [
     { icon: "calendar-outline", value: booking.date, label: "Date" },
     { icon: "time-outline", value: booking.time, label: "Time" },
     { icon: "speedometer-outline", value: `${booking.distance?.toFixed(1) || "—"} mi`, label: "Distance" },
-    { icon: "cash-outline", value: booking.fareType === "meter" && !booking.meterFare
-      ? `£${booking.fare.toFixed(2)} – £${(booking.fare * 1.1).toFixed(2)}`
-      : `£${(booking.meterFare ?? booking.fare).toFixed(2)}`, label: booking.fareType === "meter" && !booking.meterFare ? "Est. Fare" : "Fare" },
+    { icon: "cash-outline", value: fareValue, label: fareLabel },
   ];
   return (
     <View style={styles.card}>

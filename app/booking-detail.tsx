@@ -87,8 +87,6 @@ export default function BookingDetailScreen() {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") { Alert.alert("Permission", "Location permission needed for meter."); return; }
     setMeterRunning(true);
-    setMeterDistance(0);
-    setMeterFare(0);
     lastPos.current = null;
     locationSub.current = await Location.watchPositionAsync(
       { accuracy: Location.Accuracy.High, distanceInterval: 10, timeInterval: 3000 },
@@ -158,6 +156,7 @@ export default function BookingDetailScreen() {
   const isCash = booking.paymentMethod === "cash";
   const isInvoice = booking.paymentMethod === "invoice";
   const isInProgress = booking.status === "in-progress";
+  const isActiveRide = ["accepted", "arrived", "in-progress"].includes(booking.status);
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.navy }}>
@@ -179,7 +178,7 @@ export default function BookingDetailScreen() {
           </View>)}
         </View>
 
-        <PaymentCard booking={booking} />
+        <PaymentCard booking={booking} compact={isActiveRide} />
         {booking.eventSurcharge != null && booking.eventSurcharge !== 0 && (
           <View style={{
             flexDirection: "row", alignItems: "center", gap: 8,
@@ -213,10 +212,10 @@ export default function BookingDetailScreen() {
             </View>
           </View>
         )}
-        <CustomerCard booking={booking} onCall={() => booking.phone && Linking.openURL(`tel:${booking.phone}`)} />
+        <CustomerCard booking={booking} onCall={() => booking.phone && Linking.openURL(`tel:${booking.phone}`)} compact={isActiveRide} />
         <TripCard booking={booking} currentStopIndex={currentStopIndex}
           onNextStop={() => setCurrentStopIndex((i) => i + 1)} />
-        <RideInfoCard booking={booking} />
+        <RideInfoCard booking={booking} compact={isActiveRide} />
         {booking.fareType === "meter" && (booking.status === "arrived" || isInProgress) && (
           <View style={isInProgress ? { marginBottom: 10, backgroundColor: "rgba(255,255,255,0.06)", borderRadius: 14, padding: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)" } : undefined}>
             {isInProgress && (
@@ -267,7 +266,7 @@ export default function BookingDetailScreen() {
 
         {isInProgress && <CompleteButton updating={updating} onComplete={handleComplete} />}
 
-        <View style={{ height: isInProgress && isCash && !isInvoice ? 400 : 30 }} />
+        <View style={{ height: isInProgress && isCash && !isInvoice ? 200 : 30 }} />
       </ScrollView>
     </View>
   );
