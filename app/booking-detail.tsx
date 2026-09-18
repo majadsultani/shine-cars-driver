@@ -32,6 +32,18 @@ interface Booking {
   eventSurcharge?: number | null;
 }
 
+const statusColor = (s: string) => {
+  switch (s) {
+    case "assigned": return "#3B82F6";
+    case "accepted": return "#14B8A6";
+    case "arrived": return "#A855F7";
+    case "in-progress": return "#22C55E";
+    case "completed": return "#22C55E";
+    case "cancelled": return "#EF4444";
+    default: return COLORS.gold;
+  }
+};
+
 const actions: Record<string, { label: string; next: string; icon: string; color: string }[]> = {
   assigned: [
     { label: "Accept", next: "accepted", icon: "checkmark-circle", color: COLORS.green },
@@ -163,65 +175,77 @@ export default function BookingDetailScreen() {
       <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={styles.scroll}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive">
-        <TouchableOpacity onPress={() => router.back()} style={styles.backRow}>
-          <Ionicons name="arrow-back" size={20} color={COLORS.white} />
-          <Text style={styles.backLabel}>Back</Text>
-        </TouchableOpacity>
-
-        <View style={styles.statusCard}>
+        {/* Header: Back + Status pill */}
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+          <TouchableOpacity onPress={() => router.back()} style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+            <Ionicons name="arrow-back" size={18} color={COLORS.white} />
+            <Text style={{ color: COLORS.white, fontSize: 15, fontWeight: "600" }}>Back</Text>
+          </TouchableOpacity>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-            <Text style={styles.statusLabel}>Status:</Text>
-            <Text style={styles.statusValue}>{booking.status.toUpperCase()}</Text>
-          </View>
-          {booking.isRecurring && (<View style={{ flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "rgba(168,85,247,0.15)", paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 }}>
-            <Ionicons name="repeat" size={11} color="#A855F7" /><Text style={{ color: "#A855F7", fontSize: 10, fontWeight: "800" }}>RECURRING</Text>
-          </View>)}
-        </View>
-
-        <PaymentCard booking={booking} compact={isActiveRide} />
-        {booking.eventSurcharge != null && booking.eventSurcharge !== 0 && (
-          <View style={{
-            flexDirection: "row", alignItems: "center", gap: 8,
-            backgroundColor: booking.eventSurcharge > 0 ? "rgba(249,115,22,0.08)" : "rgba(34,197,94,0.08)",
-            borderRadius: 10, paddingVertical: 8, paddingHorizontal: 12, marginBottom: 10,
-          }}>
-            <View style={{
-              width: 26, height: 26, borderRadius: 8,
-              backgroundColor: booking.eventSurcharge > 0 ? "rgba(249,115,22,0.15)" : "rgba(34,197,94,0.15)",
-              justifyContent: "center", alignItems: "center",
-            }}>
-              <Ionicons
-                name={booking.eventSurcharge > 0 ? "trending-up" : "pricetag"}
-                size={14}
-                color={booking.eventSurcharge > 0 ? "#F97316" : "#22C55E"}
-              />
-            </View>
-            <Text style={{ color: COLORS.white, fontSize: 11, fontWeight: "600", flex: 1 }}>
-              {booking.eventSurcharge > 0 ? "Event Surcharge" : "Discount"} applied
-            </Text>
-            <View style={{
-              backgroundColor: booking.eventSurcharge > 0 ? "rgba(249,115,22,0.15)" : "rgba(34,197,94,0.15)",
-              paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8,
-            }}>
-              <Text style={{
-                color: booking.eventSurcharge > 0 ? "#F97316" : "#22C55E",
-                fontSize: 11, fontWeight: "800",
-              }}>
-                {booking.eventSurcharge > 0 ? `+${booking.eventSurcharge}%` : `${booking.eventSurcharge}%`}
+            {booking.isRecurring && (
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 3, backgroundColor: "rgba(168,85,247,0.12)", paddingHorizontal: 8, paddingVertical: 4, borderRadius: 20 }}>
+                <Ionicons name="repeat" size={10} color="#A855F7" />
+                <Text style={{ color: "#A855F7", fontSize: 9, fontWeight: "800" }}>RECURRING</Text>
+              </View>
+            )}
+            <View style={{ backgroundColor: statusColor(booking.status) + "18", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 }}>
+              <Text style={{ color: statusColor(booking.status), fontSize: 11, fontWeight: "800", letterSpacing: 0.5 }}>
+                {booking.status.toUpperCase()}
               </Text>
             </View>
           </View>
+        </View>
+
+        {/* Payment + Customer merged strip when active */}
+        {isActiveRide ? (
+          <View style={{ backgroundColor: "rgba(255,255,255,0.05)", borderRadius: 14, marginBottom: 8, borderWidth: 1, borderColor: "rgba(255,255,255,0.07)", overflow: "hidden" }}>
+            <PaymentCard booking={booking} compact />
+            {booking.eventSurcharge != null && booking.eventSurcharge !== 0 && (
+              <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 14, paddingVertical: 6, backgroundColor: booking.eventSurcharge > 0 ? "rgba(249,115,22,0.06)" : "rgba(34,197,94,0.06)" }}>
+                <Ionicons name={booking.eventSurcharge > 0 ? "trending-up" : "pricetag"} size={12} color={booking.eventSurcharge > 0 ? "#F97316" : "#22C55E"} />
+                <Text style={{ color: booking.eventSurcharge > 0 ? "#F97316" : "#22C55E", fontSize: 10, fontWeight: "700", marginLeft: 6, flex: 1 }}>
+                  {booking.eventSurcharge > 0 ? "Surcharge" : "Discount"} {booking.eventSurcharge > 0 ? `+${booking.eventSurcharge}%` : `${booking.eventSurcharge}%`}
+                </Text>
+              </View>
+            )}
+            <CustomerCard booking={booking} onCall={() => booking.phone && Linking.openURL(`tel:${booking.phone}`)} compact />
+          </View>
+        ) : (
+          <>
+            <PaymentCard booking={booking} />
+            {booking.eventSurcharge != null && booking.eventSurcharge !== 0 && (
+              <View style={{
+                flexDirection: "row", alignItems: "center", gap: 8,
+                backgroundColor: booking.eventSurcharge > 0 ? "rgba(249,115,22,0.08)" : "rgba(34,197,94,0.08)",
+                borderRadius: 10, paddingVertical: 8, paddingHorizontal: 12, marginBottom: 10,
+              }}>
+                <Ionicons name={booking.eventSurcharge > 0 ? "trending-up" : "pricetag"} size={14} color={booking.eventSurcharge > 0 ? "#F97316" : "#22C55E"} />
+                <Text style={{ color: COLORS.white, fontSize: 11, fontWeight: "600", flex: 1 }}>
+                  {booking.eventSurcharge > 0 ? "Event Surcharge" : "Discount"} applied
+                </Text>
+                <View style={{ backgroundColor: booking.eventSurcharge > 0 ? "rgba(249,115,22,0.15)" : "rgba(34,197,94,0.15)", paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 }}>
+                  <Text style={{ color: booking.eventSurcharge > 0 ? "#F97316" : "#22C55E", fontSize: 11, fontWeight: "800" }}>
+                    {booking.eventSurcharge > 0 ? `+${booking.eventSurcharge}%` : `${booking.eventSurcharge}%`}
+                  </Text>
+                </View>
+              </View>
+            )}
+            <CustomerCard booking={booking} onCall={() => booking.phone && Linking.openURL(`tel:${booking.phone}`)} />
+          </>
         )}
-        <CustomerCard booking={booking} onCall={() => booking.phone && Linking.openURL(`tel:${booking.phone}`)} compact={isActiveRide} />
+
         <TripCard booking={booking} currentStopIndex={currentStopIndex}
           onNextStop={() => setCurrentStopIndex((i) => i + 1)} />
         <RideInfoCard booking={booking} compact={isActiveRide} />
         {booking.fareType === "meter" && (booking.status === "arrived" || isInProgress) && (
-          <View style={isInProgress ? { marginBottom: 10, backgroundColor: "rgba(255,255,255,0.06)", borderRadius: 14, padding: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)" } : undefined}>
+          <View style={isInProgress ? { marginBottom: 8, backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 14, padding: 10, borderWidth: 1, borderColor: "rgba(34,197,94,0.12)" } : undefined}>
             {isInProgress && (
-              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                <Text style={{ color: COLORS.white, fontSize: 14, fontWeight: "700" }}>Trip in progress</Text>
-                <Text style={{ color: COLORS.gold, fontSize: 11, fontWeight: "600" }}>
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                  <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: "#22C55E" }} />
+                  <Text style={{ color: COLORS.white, fontSize: 13, fontWeight: "800" }}>Live Trip</Text>
+                </View>
+                <Text style={{ color: COLORS.gray400, fontSize: 10, fontWeight: "600" }}>
                   {booking.distance.toFixed(1)} mi · £{booking.fare.toFixed(2)}–£{(booking.fare * 1.1).toFixed(2)}
                 </Text>
               </View>
