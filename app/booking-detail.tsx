@@ -224,8 +224,8 @@ export default function BookingDetailScreen() {
                 </Text>
               </View>
             )}
-            <View style={isInProgress ? { flexDirection: "row", gap: 8 } : undefined}>
-              <View style={isInProgress ? { flex: 1 } : undefined}>
+            <View key={isInProgress ? "ip" : "ar"} style={isInProgress ? { flexDirection: "row", gap: 8 } : undefined}>
+              <View style={isInProgress ? { flex: 1, flexBasis: 0, minWidth: 0 } : undefined}>
                 <WaitingTimeCard
                   bookingId={booking.id}
                   journeyStarted={isInProgress}
@@ -235,7 +235,7 @@ export default function BookingDetailScreen() {
                 />
               </View>
               {isInProgress && !isInvoice && (
-                <View style={{ flex: 1 }}>
+                <View style={{ flex: 1, flexBasis: 0, minWidth: 0 }}>
                   <MeterCard meterRunning={meterRunning} meterDistance={meterDistance}
                     meterFare={meterFare} waitingCharge={waitingCharge} onStart={startMeter} onStop={stopMeter}
                     compact />

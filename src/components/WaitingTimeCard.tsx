@@ -139,7 +139,7 @@ export default function WaitingTimeCard({ bookingId, journeyStarted, initialSeco
           </View>
         </View>
         <View style={{ alignItems: "center", marginBottom: 10 }}>
-          <Text style={{ color: COLORS.white, fontSize: 22, fontWeight: "800", fontVariant: ["tabular-nums"], letterSpacing: 0.5 }}>{formatTime(totalSeconds)}</Text>
+          <Text style={{ color: COLORS.white, fontSize: 20, fontWeight: "800", fontVariant: ["tabular-nums"] }} numberOfLines={1} adjustsFontSizeToFit>{formatTime(totalSeconds)}</Text>
           <Text style={{ color: charge > 0 ? "#F97316" : COLORS.gray500, fontSize: 10, fontWeight: "600", marginTop: 2 }}>
             £{charge.toFixed(2)}
           </Text>
