@@ -26,7 +26,7 @@ export default function MeterCard({ meterRunning, meterDistance, meterFare, wait
           </View>
         </View>
         <View style={{ alignItems: "center", marginBottom: 10 }}>
-          <Text style={{ color: COLORS.white, fontSize: 22, fontWeight: "800", letterSpacing: 0.5 }}>£{meterFare.toFixed(2)}</Text>
+          <Text style={{ color: COLORS.white, fontSize: 20, fontWeight: "800" }} numberOfLines={1} adjustsFontSizeToFit>£{meterFare.toFixed(2)}</Text>
           <Text style={{ color: COLORS.gray500, fontSize: 10, fontWeight: "600", marginTop: 2 }}>{meterDistance.toFixed(1)} mi</Text>
         </View>
         <TouchableOpacity activeOpacity={0.8} onPress={meterRunning ? onStop : onStart}

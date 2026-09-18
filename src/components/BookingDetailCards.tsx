@@ -34,14 +34,14 @@ export function PaymentCard({ booking, compact }: { booking: Booking; compact?: 
     const color = isInvoice ? "#A855F7" : isCard ? "#06B6D4" : COLORS.gold;
     const label = isInvoice ? "Invoice" : isCard ? (isPaid ? "Card ✓" : "Card") : "Cash";
     return (
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 14, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: "rgba(255,255,255,0.06)" }}>
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingBottom: 8, marginBottom: 8, borderBottomWidth: 1, borderBottomColor: "rgba(255,255,255,0.06)" }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           <Ionicons name={icon as keyof typeof Ionicons.glyphMap} size={15} color={color} />
-          <Text style={{ color: COLORS.white, fontSize: 13, fontWeight: "700" }}>{label}</Text>
+          <Text style={{ color: COLORS.white, fontSize: 14, fontWeight: "700" }}>{label}</Text>
           {isMeter && <View style={{ backgroundColor: "#EA580C", paddingHorizontal: 5, paddingVertical: 1, borderRadius: 4 }}><Text style={{ fontSize: 8, fontWeight: "800", color: "#FFF", letterSpacing: 0.5 }}>METER</Text></View>}
         </View>
         {booking.status !== "completed" && (
-          <Text style={{ color: COLORS.gold, fontSize: 13, fontWeight: "800" }}>
+          <Text style={{ color: COLORS.gold, fontSize: 14, fontWeight: "800" }}>
             {isMeter && !booking.meterFare ? `£${booking.fare.toFixed(2)}–£${(booking.fare * 1.1).toFixed(2)}` : `£${(booking.meterFare ?? booking.fare).toFixed(2)}`}
           </Text>
         )}
@@ -91,15 +91,18 @@ export function PaymentCard({ booking, compact }: { booking: Booking; compact?: 
 export function CustomerCard({ booking, onCall, compact }: { booking: Booking; onCall: () => void; compact?: boolean }) {
   if (compact) {
     return (
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 14, paddingVertical: 10 }}>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-          <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: "rgba(245,166,35,0.12)", justifyContent: "center", alignItems: "center" }}>
-            <Text style={{ color: COLORS.gold, fontSize: 12, fontWeight: "800" }}>{booking.name.charAt(0).toUpperCase()}</Text>
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingBottom: 10, marginBottom: 8, borderBottomWidth: 1, borderBottomColor: "rgba(255,255,255,0.06)" }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+          <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: "rgba(245,166,35,0.12)", justifyContent: "center", alignItems: "center" }}>
+            <Text style={{ color: COLORS.gold, fontSize: 13, fontWeight: "800" }}>{booking.name.charAt(0).toUpperCase()}</Text>
           </View>
-          <Text style={{ color: COLORS.white, fontSize: 13, fontWeight: "600" }}>{booking.name}</Text>
+          <View>
+            <Text style={{ color: COLORS.white, fontSize: 14, fontWeight: "700" }}>{booking.name}</Text>
+            <Text style={{ color: COLORS.gray500, fontSize: 11, marginTop: 1 }}>{booking.phone}</Text>
+          </View>
         </View>
-        <TouchableOpacity onPress={onCall} style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: "rgba(34,197,94,0.12)", justifyContent: "center", alignItems: "center" }}>
-          <Ionicons name="call" size={15} color={COLORS.green} />
+        <TouchableOpacity onPress={onCall} style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: "rgba(34,197,94,0.12)", justifyContent: "center", alignItems: "center" }}>
+          <Ionicons name="call" size={16} color={COLORS.green} />
         </TouchableOpacity>
       </View>
     );
@@ -178,7 +181,7 @@ export function RideInfoCard({ booking, compact }: { booking: Booking; compact?:
       { value: fareValue, label: fareLabel },
     ];
     return (
-      <View style={{ flexDirection: "row", backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 12, paddingVertical: 8, marginBottom: 8, borderWidth: 1, borderColor: "rgba(255,255,255,0.06)" }}>
+      <View style={{ flexDirection: "row", paddingVertical: 6, marginBottom: 8, borderBottomWidth: 1, borderBottomColor: "rgba(255,255,255,0.06)" }}>
         {infoItems.map((item, i) => (
           <View key={item.label} style={{ alignItems: "center", flex: item.label === fareLabel ? 1.3 : 1, borderRightWidth: i < 3 ? 1 : 0, borderRightColor: "rgba(255,255,255,0.06)" }}>
             <Text style={{ color: COLORS.gray500, fontSize: 8, fontWeight: "600", textTransform: "uppercase", letterSpacing: 0.5 }}>{item.label}</Text>
@@ -214,7 +217,15 @@ export function RideInfoCard({ booking, compact }: { booking: Booking; compact?:
 export function NotesCard({ booking }: { booking: Booking }) {
   const t = booking.notes?.startsWith("stripe:") ? null : booking.notes;
   if (!t) return null;
-  return (<View style={styles.card}><Text style={styles.cardTitle}>Notes from Dispatcher</Text><View style={styles.infoRow}><Ionicons name="document-text-outline" size={16} color={COLORS.gold} /><Text style={[styles.infoText, { flex: 1 }]}>{t}</Text></View></View>);
+  return (
+    <View style={styles.card}>
+      <Text style={styles.cardTitle}>Notes</Text>
+      <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 8 }}>
+        <Ionicons name="document-text-outline" size={14} color={COLORS.gold} style={{ marginTop: 2 }} />
+        <Text style={{ color: COLORS.gray400, fontSize: 13, flex: 1, lineHeight: 18 }}>{t}</Text>
+      </View>
+    </View>
+  );
 }
 
 export function CashInputCard({ booking, cashAmount, setCashAmount, waitingCharge = 0, extraChargeNote, setExtraChargeNote, onFocus }: {
@@ -226,8 +237,9 @@ export function CashInputCard({ booking, cashAmount, setCashAmount, waitingCharg
     <View style={styles.card}>
       <Text style={styles.cardTitle}>Cash Collected</Text>
       {waitingCharge > 0 && (
-        <View style={{ backgroundColor: "rgba(249,115,22,0.1)", borderRadius: 10, padding: 10, marginBottom: 10, borderWidth: 1, borderColor: "rgba(249,115,22,0.2)" }}>
-          <Text style={{ color: "#F97316", fontSize: 12, fontWeight: "700", textAlign: "center" }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 }}>
+          <Ionicons name="time-outline" size={13} color="#F97316" />
+          <Text style={{ color: "#F97316", fontSize: 12, fontWeight: "700" }}>
             Includes £{waitingCharge.toFixed(2)} waiting charge
           </Text>
         </View>

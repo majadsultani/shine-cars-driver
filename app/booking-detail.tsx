@@ -196,49 +196,23 @@ export default function BookingDetailScreen() {
           </View>
         </View>
 
-        {/* Payment + Customer merged strip when active */}
-        {isActiveRide ? (
-          <View style={{ backgroundColor: "rgba(255,255,255,0.05)", borderRadius: 14, marginBottom: 8, borderWidth: 1, borderColor: "rgba(255,255,255,0.07)", overflow: "hidden" }}>
-            <PaymentCard booking={booking} compact />
-            {booking.eventSurcharge != null && booking.eventSurcharge !== 0 && (
-              <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 14, paddingVertical: 6, backgroundColor: booking.eventSurcharge > 0 ? "rgba(249,115,22,0.06)" : "rgba(34,197,94,0.06)" }}>
-                <Ionicons name={booking.eventSurcharge > 0 ? "trending-up" : "pricetag"} size={12} color={booking.eventSurcharge > 0 ? "#F97316" : "#22C55E"} />
-                <Text style={{ color: booking.eventSurcharge > 0 ? "#F97316" : "#22C55E", fontSize: 10, fontWeight: "700", marginLeft: 6, flex: 1 }}>
-                  {booking.eventSurcharge > 0 ? "Surcharge" : "Discount"} {booking.eventSurcharge > 0 ? `+${booking.eventSurcharge}%` : `${booking.eventSurcharge}%`}
-                </Text>
-              </View>
-            )}
-            <CustomerCard booking={booking} onCall={() => booking.phone && Linking.openURL(`tel:${booking.phone}`)} compact />
+        {/* Payment + Customer */}
+        <PaymentCard booking={booking} compact={isActiveRide} />
+        {booking.eventSurcharge != null && booking.eventSurcharge !== 0 && (
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingVertical: 4, marginBottom: 6 }}>
+            <Ionicons name={booking.eventSurcharge > 0 ? "trending-up" : "pricetag"} size={12} color={booking.eventSurcharge > 0 ? "#F97316" : "#22C55E"} />
+            <Text style={{ color: booking.eventSurcharge > 0 ? "#F97316" : "#22C55E", fontSize: 11, fontWeight: "700" }}>
+              {booking.eventSurcharge > 0 ? "Surcharge" : "Discount"} {booking.eventSurcharge > 0 ? `+${booking.eventSurcharge}%` : `${booking.eventSurcharge}%`}
+            </Text>
           </View>
-        ) : (
-          <>
-            <PaymentCard booking={booking} />
-            {booking.eventSurcharge != null && booking.eventSurcharge !== 0 && (
-              <View style={{
-                flexDirection: "row", alignItems: "center", gap: 8,
-                backgroundColor: booking.eventSurcharge > 0 ? "rgba(249,115,22,0.08)" : "rgba(34,197,94,0.08)",
-                borderRadius: 10, paddingVertical: 8, paddingHorizontal: 12, marginBottom: 10,
-              }}>
-                <Ionicons name={booking.eventSurcharge > 0 ? "trending-up" : "pricetag"} size={14} color={booking.eventSurcharge > 0 ? "#F97316" : "#22C55E"} />
-                <Text style={{ color: COLORS.white, fontSize: 11, fontWeight: "600", flex: 1 }}>
-                  {booking.eventSurcharge > 0 ? "Event Surcharge" : "Discount"} applied
-                </Text>
-                <View style={{ backgroundColor: booking.eventSurcharge > 0 ? "rgba(249,115,22,0.15)" : "rgba(34,197,94,0.15)", paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 }}>
-                  <Text style={{ color: booking.eventSurcharge > 0 ? "#F97316" : "#22C55E", fontSize: 11, fontWeight: "800" }}>
-                    {booking.eventSurcharge > 0 ? `+${booking.eventSurcharge}%` : `${booking.eventSurcharge}%`}
-                  </Text>
-                </View>
-              </View>
-            )}
-            <CustomerCard booking={booking} onCall={() => booking.phone && Linking.openURL(`tel:${booking.phone}`)} />
-          </>
         )}
+        <CustomerCard booking={booking} onCall={() => booking.phone && Linking.openURL(`tel:${booking.phone}`)} compact={isActiveRide} />
 
         <TripCard booking={booking} currentStopIndex={currentStopIndex}
           onNextStop={() => setCurrentStopIndex((i) => i + 1)} />
         <RideInfoCard booking={booking} compact={isActiveRide} />
         {booking.fareType === "meter" && (booking.status === "arrived" || isInProgress) && (
-          <View style={isInProgress ? { marginBottom: 8, backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 14, padding: 10, borderWidth: 1, borderColor: "rgba(34,197,94,0.12)" } : undefined}>
+          <View style={isInProgress ? { marginBottom: 8 } : undefined}>
             {isInProgress && (
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
@@ -250,8 +224,8 @@ export default function BookingDetailScreen() {
                 </Text>
               </View>
             )}
-            <View style={isInProgress ? { flexDirection: "row", gap: 8 } : undefined}>
-              <View style={isInProgress ? { flex: 1 } : undefined}>
+            <View key={isInProgress ? "ip" : "ar"} style={isInProgress ? { flexDirection: "row", gap: 8 } : undefined}>
+              <View style={isInProgress ? { flex: 1, flexBasis: 0, minWidth: 0 } : undefined}>
                 <WaitingTimeCard
                   bookingId={booking.id}
                   journeyStarted={isInProgress}
@@ -261,7 +235,7 @@ export default function BookingDetailScreen() {
                 />
               </View>
               {isInProgress && !isInvoice && (
-                <View style={{ flex: 1 }}>
+                <View style={{ flex: 1, flexBasis: 0, minWidth: 0 }}>
                   <MeterCard meterRunning={meterRunning} meterDistance={meterDistance}
                     meterFare={meterFare} waitingCharge={waitingCharge} onStart={startMeter} onStop={stopMeter}
                     compact />
@@ -273,9 +247,10 @@ export default function BookingDetailScreen() {
         <NotesCard booking={booking} />
 
         {isInvoice && isInProgress && (
-          <View style={{ backgroundColor: "rgba(168,85,247,0.1)", borderRadius: 16, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: "rgba(168,85,247,0.2)" }}>
-            <Text style={{ color: "#A855F7", fontSize: 12, fontWeight: "700", textAlign: "center" }}>
-              {booking.isRecurring ? "Recurring Ride — Will be added to company invoice" : "Invoice Payment — No cash collection needed"}
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingVertical: 8, marginBottom: 8 }}>
+            <Ionicons name="document-text-outline" size={14} color="#A855F7" />
+            <Text style={{ color: "#A855F7", fontSize: 12, fontWeight: "700" }}>
+              {booking.isRecurring ? "Recurring — Added to company invoice" : "Invoice — No cash collection needed"}
             </Text>
           </View>
         )}
