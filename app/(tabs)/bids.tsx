@@ -15,7 +15,7 @@ interface BidBooking {
   pickup: string; dropoff: string; stops?: string | null;
   date: string; time: string;
   fare: number; distance: number; vehicle: string;
-  notes?: string | null;
+  fareType?: string; notes?: string | null;
   pickupDetails?: string | null; dropoffDetails?: string | null;
   buildingInfo?: string | null;
 }
@@ -47,7 +47,7 @@ export default function BidsScreen() {
   const handleBid = (booking: BidBooking) => {
     Alert.alert(
       "Accept This Job?",
-      `${booking.pickup} → ${booking.dropoff}\n£${booking.fare.toFixed(2)} · ${booking.date} at ${booking.time}`,
+      `${booking.pickup} → ${booking.dropoff}\n${booking.fareType === "meter" ? `£${(booking.fare * 0.9).toFixed(2)} – £${(booking.fare * 1.1).toFixed(2)} (Meter)` : `£${booking.fare.toFixed(2)}`} · ${booking.date} at ${booking.time}`,
       [
         { text: "Cancel", style: "cancel" },
         {
@@ -134,9 +134,10 @@ export default function BidsScreen() {
 
               <View style={styles.cardFooter}>
                 <View style={styles.infoRow}>
-                  <Text style={styles.fare}>£{b.fare.toFixed(2)}</Text>
+                  <Text style={styles.fare}>{b.fareType === "meter" ? `£${(b.fare * 0.9).toFixed(2)} – £${(b.fare * 1.1).toFixed(2)}` : `£${b.fare.toFixed(2)}`}</Text>
                   <Text style={styles.distance}>{b.distance?.toFixed(1) || "—"} mi</Text>
                   <Text style={styles.vehicle}>{(b.vehicle || "car").toUpperCase()}</Text>
+                  {b.fareType === "meter" && <Text style={styles.meterTag}>METER</Text>}
                 </View>
                 <TouchableOpacity
                   activeOpacity={0.8}
@@ -203,4 +204,8 @@ const styles = StyleSheet.create({
     flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8,
   },
   bidBtnText: { color: COLORS.white, fontSize: 15, fontWeight: "700" },
+  meterTag: {
+    color: "#EA580C", fontSize: 10, fontWeight: "800",
+    backgroundColor: "#FFF7ED", paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6,
+  },
 });
