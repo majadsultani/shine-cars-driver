@@ -1,19 +1,25 @@
-import { createContext, useContext, ReactNode, Component, ErrorInfo, useEffect } from "react";
+import { createContext, useContext, ReactNode, Component, ErrorInfo, useEffect, useState, useCallback, useRef } from "react";
 import { View, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { useBookingPolling, NewBooking } from "@/src/hooks/useBookingPolling";
-import { updateBookingStatus, acceptRecurringTemplate, rejectRecurringTemplate } from "@/src/lib/api";
+import { updateBookingStatus, acceptRecurringTemplate, rejectRecurringTemplate, getOpenBids } from "@/src/lib/api";
 import BookingAlertModal from "@/src/components/BookingAlertModal";
 
 interface BookingAlertState {
   assignedCount: number;
   recurringCount: number;
+  openBidCount: number;
 }
 
-const BookingAlertCtx = createContext<BookingAlertState>({ assignedCount: 0, recurringCount: 0 });
+const BookingAlertCtx = createContext<BookingAlertState>({ assignedCount: 0, recurringCount: 0, openBidCount: 0 });
 
 export function useBookingAlertCounts() {
   return useContext(BookingAlertCtx);
+}
+
+export function useOpenBidCount() {
+  const { openBidCount } = useContext(BookingAlertCtx);
+  return openBidCount;
 }
 
 // Error boundary to catch and log crashes from the alert modal
@@ -40,6 +46,21 @@ class AlertErrorBoundary extends Component<{ children: ReactNode }, { error: str
 export function BookingAlertProvider({ children }: { children: ReactNode }) {
   const { assignedCount, recurringCount, alertBooking, dismissAlert } = useBookingPolling();
   const router = useRouter();
+  const [openBidCount, setOpenBidCount] = useState(0);
+  const bidIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const pollBids = useCallback(async () => {
+    try {
+      const res = await getOpenBids();
+      if (res.success) setOpenBidCount((res.bookings || []).length);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    pollBids();
+    bidIntervalRef.current = setInterval(pollBids, 10_000);
+    return () => { if (bidIntervalRef.current) clearInterval(bidIntervalRef.current); };
+  }, [pollBids]);
 
   const handleAccept = async (id: string) => {
     const isRecurring = alertBooking?.isRecurring;
@@ -63,7 +84,7 @@ export function BookingAlertProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <BookingAlertCtx.Provider value={{ assignedCount, recurringCount }}>
+    <BookingAlertCtx.Provider value={{ assignedCount, recurringCount, openBidCount }}>
       {children}
       <AlertErrorBoundary>
         <BookingAlertModal

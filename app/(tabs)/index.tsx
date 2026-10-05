@@ -177,7 +177,7 @@ export default function DashboardScreen() {
           </View>
         </View>
         {toggling ? (
-          <ActivityIndicator color={available ? COLORS.green : COLORS.gray400} />
+          <ActivityIndicator color={available ? COLORS.green : "#9CA3AF"} />
         ) : (
           <View style={[styles.toggleSwitch, available ? styles.switchOn : styles.switchOff]}>
             <View style={[styles.switchThumb, available ? styles.thumbOn : styles.thumbOff]} />

@@ -11,7 +11,7 @@ export default function MeterCard({ meterRunning, meterDistance, meterFare, wait
   if (compact) {
     const statusText = meterRunning ? "RUNNING" : (meterDistance > 0 ? "PAUSED" : "READY");
     const statusBg = meterRunning ? "rgba(34,197,94,0.15)" : "rgba(255,255,255,0.08)";
-    const statusClr = meterRunning ? "#22C55E" : COLORS.gray400;
+    const statusClr = meterRunning ? "#22C55E" : "#9CA3AF";
     return (
       <View style={{ backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 14, padding: 12, borderWidth: 1, borderColor: meterRunning ? "#F9731630" : "rgba(255,255,255,0.06)" }}>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>

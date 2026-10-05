@@ -75,7 +75,7 @@ export default function SignupScreen() {
           <View key={f.placeholder} style={styles.inputWrap}>
             <Ionicons name={f.icon} size={20} color={COLORS.gray400} />
             <TextInput style={styles.input} placeholder={f.placeholder}
-              placeholderTextColor={COLORS.gray400} value={f.value}
+              placeholderTextColor="#9CA3AF" value={f.value}
               onChangeText={f.set} keyboardType={f.kb || "default"}
               autoCapitalize={f.kb === "email-address" ? "none" : (f as { auto?: string }).auto === "characters" ? "characters" : "words"} />
           </View>
@@ -94,7 +94,7 @@ export default function SignupScreen() {
         <View style={styles.inputWrap}>
           <Ionicons name="lock-closed-outline" size={20} color={COLORS.gray400} />
           <TextInput style={styles.input} placeholder="Password"
-            placeholderTextColor={COLORS.gray400} value={password}
+            placeholderTextColor="#9CA3AF" value={password}
             onChangeText={setPassword} secureTextEntry={!showPass} />
           <TouchableOpacity onPress={() => setShowPass(!showPass)}>
             <Ionicons name={showPass ? "eye-off-outline" : "eye-outline"} size={20} color={COLORS.gray400} />

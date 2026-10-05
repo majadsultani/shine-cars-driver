@@ -247,7 +247,7 @@ export function CashInputCard({ booking, cashAmount, setCashAmount, waitingCharg
       <View style={styles.cashInputRow}>
         <Text style={styles.currencySign}>£</Text>
         <TextInput style={styles.cashInput} value={cashAmount} onChangeText={setCashAmount}
-          placeholder="0.00" placeholderTextColor={COLORS.gray500} keyboardType="decimal-pad"
+          placeholder="0.00" placeholderTextColor="#9CA3AF" keyboardType="decimal-pad"
           onFocus={onFocus} />
       </View>
       <Text style={styles.cashHint}>Enter amount received from customer</Text>
@@ -264,7 +264,7 @@ export function CashInputCard({ booking, cashAmount, setCashAmount, waitingCharg
             value={extraChargeNote}
             onChangeText={setExtraChargeNote}
             placeholder="e.g. Extra luggage, longer route..."
-            placeholderTextColor={COLORS.gray500}
+            placeholderTextColor="#9CA3AF"
             multiline
             onFocus={onFocus}
           />

@@ -135,9 +135,9 @@ export default function BookingsScreen() {
                   </View>
                   <Text style={styles.cardDate}>{b.date} at {b.time}</Text>
                 </View>
-                <View style={[styles.statusBadge, { backgroundColor: (statusColors[b.status] || COLORS.gray500) + "20" }]}>
-                  <View style={[styles.statusDot, { backgroundColor: statusColors[b.status] || COLORS.gray500 }]} />
-                  <Text style={[styles.statusText, { color: statusColors[b.status] || COLORS.gray500 }]}>
+                <View style={[styles.statusBadge, { backgroundColor: (statusColors[b.status] || "#6B7280") + "20" }]}>
+                  <View style={[styles.statusDot, { backgroundColor: statusColors[b.status] || "#6B7280" }]} />
+                  <Text style={[styles.statusText, { color: statusColors[b.status] || "#6B7280" }]}>
                     {b.status.charAt(0).toUpperCase() + b.status.slice(1)}
                   </Text>
                 </View>

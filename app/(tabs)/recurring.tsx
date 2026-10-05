@@ -81,7 +81,7 @@ export default function RecurringScreen() {
             {templates.map((t) => {
               const days = parseDays(t.days);
               const st = getStatus(t);
-              const c = statusColors[st] || COLORS.gray500;
+              const c = statusColors[st] || "#6B7280";
               return (
                 <TouchableOpacity key={t.id} activeOpacity={0.7}
                   onPress={() => router.push(`/recurring-detail?id=${t.id}`)}
@@ -146,7 +146,7 @@ export default function RecurringScreen() {
               <>
                 <Text style={styles.sectionTitle}>Today&apos;s Rides</Text>
                 {todayBookings.map((b) => {
-                  const c = statusColors[b.status] || COLORS.gray500;
+                  const c = statusColors[b.status] || "#6B7280";
                   return (
                     <TouchableOpacity key={b.id} activeOpacity={0.7}
                       onPress={() => router.push(`/booking-detail?id=${b.id}`)} style={styles.card}>

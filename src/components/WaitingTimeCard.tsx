@@ -119,12 +119,12 @@ export default function WaitingTimeCard({ bookingId, journeyStarted, initialSeco
 
   const statusColor = running
     ? (isFreePhase ? "#22C55E" : "#F97316")
-    : (totalSeconds > 0 ? COLORS.gray400 : COLORS.gold);
+    : (totalSeconds > 0 ? "#9CA3AF" : COLORS.gold);
 
   if (compact) {
     const statusText = running ? (isFreePhase ? "FREE" : "CHARGING") : (totalSeconds > 0 ? "PAUSED" : "READY");
     const statusBg = running ? (isFreePhase ? "rgba(34,197,94,0.15)" : "rgba(249,115,22,0.15)") : "rgba(255,255,255,0.08)";
-    const statusClr = running ? (isFreePhase ? "#22C55E" : "#F97316") : COLORS.gray400;
+    const statusClr = running ? (isFreePhase ? "#22C55E" : "#F97316") : "#9CA3AF";
     return (
       <View style={{ backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 14, padding: 12, borderWidth: 1, borderColor: running ? "#22C55E30" : "rgba(255,255,255,0.06)" }}>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
