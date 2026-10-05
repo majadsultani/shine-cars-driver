@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/src/constants/theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useBookingAlertCounts } from "@/src/context/BookingAlertContext";
+import { useBookingAlertCounts, useOpenBidCount } from "@/src/context/BookingAlertContext";
 
 function TabIcon({ name, color, focused }: { name: keyof typeof Ionicons.glyphMap; color: string | import("react-native").ColorValue; focused: boolean }) {
   return (
@@ -21,6 +21,7 @@ function TabIcon({ name, color, focused }: { name: keyof typeof Ionicons.glyphMa
 
 export default function TabsLayout() {
   const { assignedCount, recurringCount } = useBookingAlertCounts();
+  const openBidCount = useOpenBidCount();
   const insets = useSafeAreaInsets();
   const bottomPad = Math.max(insets.bottom, 10);
 
@@ -51,6 +52,16 @@ export default function TabsLayout() {
         tabBarBadge: assignedCount > 0 ? assignedCount : undefined,
         tabBarBadgeStyle: {
           backgroundColor: COLORS.crimson, color: COLORS.white,
+          fontSize: 10, fontWeight: "700", minWidth: 18, height: 18,
+          lineHeight: 18, borderRadius: 9,
+        },
+      }} />
+      <Tabs.Screen name="bids" options={{
+        title: "Bids",
+        tabBarIcon: ({ color, focused }) => <TabIcon name={focused ? "flash" : "flash-outline"} color={color} focused={focused} />,
+        tabBarBadge: openBidCount > 0 ? openBidCount : undefined,
+        tabBarBadgeStyle: {
+          backgroundColor: "#F97316", color: COLORS.white,
           fontSize: 10, fontWeight: "700", minWidth: 18, height: 18,
           lineHeight: 18, borderRadius: 9,
         },

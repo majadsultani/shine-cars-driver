@@ -148,6 +148,17 @@ export async function changePassword(oldPassword: string, newPassword: string) {
   });
 }
 
+export async function getOpenBids() {
+  return request("/api/drivers/bookings/open-bids");
+}
+
+export async function placeBid(bookingId: string) {
+  return request("/api/drivers/bookings/bid", {
+    method: "POST",
+    body: JSON.stringify({ bookingId }),
+  });
+}
+
 export async function getDriverInvoices() {
   return request("/api/drivers/invoices");
 }
