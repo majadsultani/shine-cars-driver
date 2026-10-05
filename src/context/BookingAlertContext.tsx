@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { useBookingPolling, NewBooking } from "@/src/hooks/useBookingPolling";
 import { updateBookingStatus, acceptRecurringTemplate, rejectRecurringTemplate, getOpenBids } from "@/src/lib/api";
 import BookingAlertModal from "@/src/components/BookingAlertModal";
+import OpenBidAlertModal from "@/src/components/OpenBidAlertModal";
 
 interface BookingAlertState {
   assignedCount: number;
@@ -47,14 +48,30 @@ export function BookingAlertProvider({ children }: { children: ReactNode }) {
   const { assignedCount, recurringCount, alertBooking, dismissAlert } = useBookingPolling();
   const router = useRouter();
   const [openBidCount, setOpenBidCount] = useState(0);
+  const [openBidAlert, setOpenBidAlert] = useState<{ id: string; name: string; pickup: string; dropoff: string; vehicle?: string; fare?: number; date?: string; time?: string; buildingInfo?: string | null } | null>(null);
+  const knownBidIds = useRef<Set<string>>(new Set());
+  const isFirstBidLoad = useRef(true);
   const bidIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const pollBids = useCallback(async () => {
     try {
       const res = await getOpenBids();
-      if (res.success) setOpenBidCount((res.bookings || []).length);
+      if (res.success) {
+        const bids = res.bookings || [];
+        setOpenBidCount(bids.length);
+        if (isFirstBidLoad.current) {
+          bids.forEach((b: { id: string }) => knownBidIds.current.add(b.id));
+          isFirstBidLoad.current = false;
+        } else {
+          const newBids = bids.filter((b: { id: string }) => !knownBidIds.current.has(b.id));
+          bids.forEach((b: { id: string }) => knownBidIds.current.add(b.id));
+          if (newBids.length > 0 && !openBidAlert && !alertBooking) {
+            setOpenBidAlert(newBids[0]);
+          }
+        }
+      }
     } catch {}
-  }, []);
+  }, [openBidAlert, alertBooking]);
 
   useEffect(() => {
     pollBids();
@@ -91,6 +108,11 @@ export function BookingAlertProvider({ children }: { children: ReactNode }) {
           booking={alertBooking}
           onAccept={handleAccept}
           onReject={handleReject}
+        />
+        <OpenBidAlertModal
+          booking={openBidAlert}
+          onView={() => { setOpenBidAlert(null); router.push("/(tabs)/bids"); }}
+          onDismiss={() => setOpenBidAlert(null)}
         />
       </AlertErrorBoundary>
     </BookingAlertCtx.Provider>
