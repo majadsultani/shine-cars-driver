@@ -174,7 +174,7 @@ export default function DocumentsScreen() {
             )}
             <View style={styles.expiryWrap}>
               <Ionicons name="calendar-outline" size={18} color={COLORS.gray400} />
-              <TextInput style={styles.expiryInput} placeholder="Expiry: DD/MM/YYYY" placeholderTextColor={COLORS.gray400}
+              <TextInput style={styles.expiryInput} placeholder="Expiry: DD/MM/YYYY" placeholderTextColor="#9CA3AF"
                 value={state.expiry} onChangeText={(v) => setExpiry(doc.key, v)} keyboardType="number-pad" maxLength={10} />
             </View>
           </View>

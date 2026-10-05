@@ -58,13 +58,13 @@ export default function LoginScreen() {
 
         <View style={styles.inputWrap}>
           <Ionicons name="mail-outline" size={20} color={COLORS.gray400} />
-          <TextInput style={styles.input} placeholder="Email" placeholderTextColor={COLORS.gray400}
+          <TextInput style={styles.input} placeholder="Email" placeholderTextColor="#9CA3AF"
             value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
         </View>
 
         <View style={styles.inputWrap}>
           <Ionicons name="lock-closed-outline" size={20} color={COLORS.gray400} />
-          <TextInput style={styles.input} placeholder="Password" placeholderTextColor={COLORS.gray400}
+          <TextInput style={styles.input} placeholder="Password" placeholderTextColor="#9CA3AF"
             value={password} onChangeText={setPassword} secureTextEntry={!showPass} />
           <TouchableOpacity onPress={() => setShowPass(!showPass)}>
             <Ionicons name={showPass ? "eye-off-outline" : "eye-outline"} size={20} color={COLORS.gray400} />

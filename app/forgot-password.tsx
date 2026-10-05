@@ -76,12 +76,12 @@ export default function ForgotPasswordScreen() {
           <>
             <View style={s.inputWrap}>
               <Ionicons name="mail-outline" size={20} color={COLORS.gray400} />
-              <TextInput style={s.input} placeholder="Email" placeholderTextColor={COLORS.gray400}
+              <TextInput style={s.input} placeholder="Email" placeholderTextColor="#9CA3AF"
                 value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
             </View>
             <View style={s.inputWrap}>
               <Ionicons name="call-outline" size={20} color={COLORS.gray400} />
-              <TextInput style={s.input} placeholder="Phone number" placeholderTextColor={COLORS.gray400}
+              <TextInput style={s.input} placeholder="Phone number" placeholderTextColor="#9CA3AF"
                 value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
             </View>
           </>
@@ -89,7 +89,7 @@ export default function ForgotPasswordScreen() {
           <>
             <View style={s.inputWrap}>
               <Ionicons name="lock-closed-outline" size={20} color={COLORS.gray400} />
-              <TextInput style={s.input} placeholder="New password" placeholderTextColor={COLORS.gray400}
+              <TextInput style={s.input} placeholder="New password" placeholderTextColor="#9CA3AF"
                 value={newPassword} onChangeText={setNewPassword} secureTextEntry={!showNew} />
               <TouchableOpacity onPress={() => setShowNew(!showNew)}>
                 <Ionicons name={showNew ? "eye-off-outline" : "eye-outline"} size={20} color={COLORS.gray400} />
@@ -97,7 +97,7 @@ export default function ForgotPasswordScreen() {
             </View>
             <View style={s.inputWrap}>
               <Ionicons name="lock-closed-outline" size={20} color={COLORS.gray400} />
-              <TextInput style={s.input} placeholder="Confirm password" placeholderTextColor={COLORS.gray400}
+              <TextInput style={s.input} placeholder="Confirm password" placeholderTextColor="#9CA3AF"
                 value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry={!showConfirm} />
               <TouchableOpacity onPress={() => setShowConfirm(!showConfirm)}>
                 <Ionicons name={showConfirm ? "eye-off-outline" : "eye-outline"} size={20} color={COLORS.gray400} />

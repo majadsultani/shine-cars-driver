@@ -97,7 +97,7 @@ export default function ChangePasswordScreen() {
             <Text style={styles.fieldLabel}>{f.label}</Text>
             <View style={styles.inputRow}>
               <TextInput style={styles.input} value={f.val} onChangeText={f.set}
-                secureTextEntry={!f.show} placeholderTextColor={COLORS.gray500}
+                secureTextEntry={!f.show} placeholderTextColor="#9CA3AF"
                 placeholder={f.label} autoCapitalize="none" />
               <TouchableOpacity onPress={f.toggle} style={styles.eyeBtn}>
                 <Ionicons name={f.show ? "eye-off-outline" : "eye-outline"} size={20} color={COLORS.gray400} />

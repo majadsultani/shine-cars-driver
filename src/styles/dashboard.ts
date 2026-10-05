@@ -30,7 +30,7 @@ export default StyleSheet.create({
   toggleLeft: { flexDirection: "row", alignItems: "center", gap: 14 },
   toggleDot: { width: 14, height: 14, borderRadius: 7 },
   dotAvailable: { backgroundColor: COLORS.green, shadowColor: COLORS.green, shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.6, shadowRadius: 8 },
-  dotBusy: { backgroundColor: COLORS.gray500 },
+  dotBusy: { backgroundColor: "#6B7280" },
   toggleLabel: { color: COLORS.white, fontSize: 18, fontWeight: "800", letterSpacing: -0.2 },
   toggleSub: { color: COLORS.gray500, fontSize: 12, marginTop: 3, fontWeight: "500" },
   toggleSwitch: { width: 54, height: 32, borderRadius: 16, justifyContent: "center", paddingHorizontal: 3 },

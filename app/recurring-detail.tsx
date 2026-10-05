@@ -77,7 +77,7 @@ export default function RecurringDetailScreen() {
   const totalRides = (template.bookings || []).length;
 
   const renderRide = (r: RideHistory, showChevron = true) => {
-    const sc = statusColors[r.status] || { bg: "rgba(150,150,150,0.15)", text: COLORS.gray500 };
+    const sc = statusColors[r.status] || { bg: "rgba(150,150,150,0.15)", text: "#6B7280" };
     return (
       <TouchableOpacity key={r.id} activeOpacity={0.7}
         onPress={() => router.push(`/booking-detail?id=${r.id}`)}

@@ -106,7 +106,7 @@ export default function ProfileScreen() {
               {editing && r.editable ? (
                 <TextInput style={s.input} value={r.label === "Name" ? name : r.label === "Phone" ? phone : r.label === "Vehicle" ? vMake : r.label === "Color" ? vColor : vReg}
                   onChangeText={r.label === "Name" ? setName : r.label === "Phone" ? setPhone : r.label === "Vehicle" ? setVMake : r.label === "Color" ? setVColor : setVReg}
-                  autoCapitalize={r.label === "Reg No." ? "characters" : "words"} placeholderTextColor={COLORS.gray500} />
+                  autoCapitalize={r.label === "Reg No." ? "characters" : "words"} placeholderTextColor="#9CA3AF" />
               ) : <Text style={s.rowValue}>{r.value}</Text>}
             </View>
           </View>
